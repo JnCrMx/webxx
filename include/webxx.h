@@ -25,6 +25,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <version>
+
+#if __cplusplus >= 202002L && __cpp_concepts >= 201907L
+#include <concepts>
+#endif
 #include <cstddef>
 #include <cstring>
 #include <functional>
@@ -180,6 +185,13 @@ namespace Webxx { namespace internal {
             data{std::move(tPlaceholder)},
             view{*data}
         {}
+#if __cplusplus >= 202002L && __cpp_concepts >= 201907L
+        Text (const std::convertible_to<std::string_view> auto value) : // view
+            type{Type::LITERAL},
+            data{},
+            view{std::string_view{value}}
+        {}
+#endif
     };
 }}
 
@@ -570,6 +582,14 @@ namespace Webxx { namespace internal {
             {},
             std::move(tContent),
         } {}
+#if __cplusplus >= 202002L && __cpp_concepts >= 201907L
+        HtmlNode (const std::convertible_to<std::string_view> auto tContent) : data {
+            {none, none, false, NONE, NONE},
+            {},
+            {},
+            std::string_view{tContent},
+        } {}
+#endif
 
         HtmlNode (
             HtmlNodeOptions&& tOptions = {none, none, false, NONE, NONE},
